@@ -1,0 +1,15 @@
+version: "3"
+services:
+  go:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.dev
+    image: coin_go
+    container_name: coin_go
+    ports:
+      - 8080:8080
+      - 2345:2345
+    volumes:
+      - ./:/app
+    environment:
+      GO_ENV: dev
