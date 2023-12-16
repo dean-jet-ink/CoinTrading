@@ -1,6 +1,6 @@
 package entities
 
-import valueobject "cointrading/app/domain/valueObject"
+import "cointrading/app/domain/valueobject"
 
 type Balance struct {
 	currencyCode *valueobject.CurrencyCode
