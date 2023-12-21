@@ -1,13 +1,23 @@
 package main
 
 import (
+	"cointrading/app/application/interactors"
 	"cointrading/app/config"
-	"log"
+	"cointrading/app/presentation/backgrounds"
+	"cointrading/app/presentation/routers"
+	"fmt"
 )
 
 func main() {
 	config.LoggingSettings(config.LogFileName())
 
-	log.Println(config.BitflyerApiKey())
-	log.Println(config.BitflyerApiSecret())
+	getRealTimeTickerUsecase := interactors.NewGetRealTimeTickerUsecase()
+
+	background := backgrounds.NewGetRealTimeTickerBackground(getRealTimeTickerUsecase)
+
+	background.Exec()
+
+	router := routers.NewGinRouter()
+
+	router.Run(fmt.Sprintf(":%v", config.Port()))
 }

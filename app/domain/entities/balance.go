@@ -1,22 +1,22 @@
 package entities
 
-import "cointrading/app/domain/valueobject"
+import "cointrading/app/domain/valueobjects"
 
 type Balance struct {
-	currencyCode *valueobject.CurrencyCode
+	currencyCode *valueobjects.CurrencyCode
 	amount       float64
 	available    float64
 }
 
 func NewBalance(currencyCode string, amount, available float64) *Balance {
 	return &Balance{
-		currencyCode: valueobject.NewCurrencyCode(currencyCode),
+		currencyCode: valueobjects.NewCurrencyCode(currencyCode),
 		amount:       amount,
 		available:    available,
 	}
 }
 
-func (b *Balance) CurrencyCode() *valueobject.CurrencyCode {
+func (b *Balance) CurrencyCode() *valueobjects.CurrencyCode {
 	return b.currencyCode
 }
 

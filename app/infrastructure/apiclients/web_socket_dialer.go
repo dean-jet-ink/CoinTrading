@@ -1,4 +1,4 @@
-package apiclient
+package apiclients
 
 import (
 	"cointrading/app/config"
@@ -30,7 +30,7 @@ func (w *WebSocketDialer) Dial(urlStr string, requestHeader http.Header) (*webso
 	return w.dialer.Dial(urlStr, requestHeader)
 }
 
-type JsonRPC2 struct {
+type jsonRPC2 struct {
 	Version string `json:"jsonrpc"`
 	Method  string `json:"method"`
 	Params  any    `json:"params"`

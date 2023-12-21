@@ -9,9 +9,21 @@ import (
 )
 
 func init() {
-	if err := godotenv.Load("/app/.env"); err != nil {
+	if err := godotenv.Load("/src/.env"); err != nil {
 		log.Fatalf("Faild to load env file: %v", err)
 	}
+}
+
+func FrontEndURL() string {
+	return os.Getenv("FRONT_END_URL")
+}
+
+func Port() string {
+	return os.Getenv("PORT")
+}
+
+func LogFileName() string {
+	return os.Getenv("LOG_FILE_NAME")
 }
 
 func BitflyerApiKey() string {
@@ -20,10 +32,6 @@ func BitflyerApiKey() string {
 
 func BitflyerApiSecret() string {
 	return os.Getenv("BITFLYER_API_SECRET")
-}
-
-func LogFileName() string {
-	return os.Getenv("LOG_FILE_NAME")
 }
 
 func WebSocketHandshakeTimeout() int {

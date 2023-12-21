@@ -1,4 +1,4 @@
-package valueobject
+package valueobjects
 
 import "strings"
 
@@ -23,7 +23,7 @@ func (c *CurrencyCode) Value() string {
 	return c.value
 }
 
-func (c *CurrencyCode) DisplayValue() string {
+func (c *CurrencyCode) String() string {
 	coinName, ok := codeMap[c.value]
 
 	if !ok {

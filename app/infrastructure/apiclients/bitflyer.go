@@ -1,28 +1,29 @@
-package apiclient
+package apiclients
 
 import (
 	"cointrading/app/domain/entities"
 	"cointrading/app/domain/repositories"
-	"cointrading/app/domain/valueobject"
+	"cointrading/app/domain/valueobjects"
 	"cointrading/app/lib"
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/url"
 	"strconv"
 	"time"
 )
 
-type BitflyerClient struct {
+type bitflyerClient struct {
 	key        string
 	secret     string
 	httpClient *clientBase
 }
 
 func NewBitflyerClient(key, secret string) repositories.TradingAPIClient {
-	return &BitflyerClient{
+	return &bitflyerClient{
 		key:        key,
 		secret:     secret,
 		httpClient: newClientBase("https://api.bitflyer.com/v1/"),
@@ -35,7 +36,7 @@ type balance struct {
 	Available    float64 `json:"available"`
 }
 
-func (b *BitflyerClient) GetBalance() ([]*entities.Balance, error) {
+func (b *bitflyerClient) GetBalance() ([]*entities.Balance, error) {
 	method := "GET"
 	path := "me/getbalance"
 
@@ -90,7 +91,7 @@ func (t *ticker) midPrice() float64 {
 	return (t.BestAsk + t.BestBid) / 2
 }
 
-func (b *BitflyerClient) GetTicker(symbol *valueobject.Symbol) (*entities.Ticker, error) {
+func (b *bitflyerClient) GetTicker(symbol *valueobjects.Symbol) (*entities.Ticker, error) {
 	method := "GET"
 	path := "ticker"
 
@@ -122,12 +123,12 @@ func (b *BitflyerClient) GetTicker(symbol *valueobject.Symbol) (*entities.Ticker
 		return nil, err
 	}
 
-	entity := entities.NewTicker(symbol.Value(), dateTime, ticker.midPrice(), ticker.Volume)
+	entity := entities.NewTicker(symbol, dateTime, ticker.midPrice(), ticker.Volume)
 
 	return entity, nil
 }
 
-func (b *BitflyerClient) GetRealTimeTicker(symbol *valueobject.Symbol, tickerChan chan<- *entities.Ticker) error {
+func (b *bitflyerClient) GetRealTimeTicker(symbol *valueobjects.Symbol, tickerChan chan<- *entities.Ticker) {
 	// wss://ws.lightstream.bitflyer.com/json-rpc
 	u := url.URL{
 		Scheme: "wss",
@@ -139,7 +140,8 @@ func (b *BitflyerClient) GetRealTimeTicker(symbol *valueobject.Symbol, tickerCha
 
 	conn, _, err := dialer.Dial(u.String(), nil)
 	if err != nil {
-		return err
+		log.Println(err)
+		return
 	}
 
 	defer conn.Close()
@@ -148,7 +150,7 @@ func (b *BitflyerClient) GetRealTimeTicker(symbol *valueobject.Symbol, tickerCha
 
 	channel := fmt.Sprintf("lightning_ticker_%s", symbolStr)
 
-	message := &JsonRPC2{
+	message := &jsonRPC2{
 		Version: "2.0",
 		Method:  "subscribe",
 		Params: map[string]string{
@@ -157,14 +159,16 @@ func (b *BitflyerClient) GetRealTimeTicker(symbol *valueobject.Symbol, tickerCha
 	}
 
 	if err := conn.WriteJSON(message); err != nil {
-		return err
+		log.Println(err)
+		return
 	}
 
 OUTER:
 	for {
-		message = &JsonRPC2{}
+		message = &jsonRPC2{}
 		if err := conn.ReadJSON(message); err != nil {
-			return err
+			log.Println(err)
+			return
 		}
 
 		if message.Method == "channelMessage" {
@@ -178,13 +182,20 @@ OUTER:
 							continue OUTER
 						}
 
-						var ticker *entities.Ticker
+						ticker := &ticker{}
 						if err := json.Unmarshal(marshalTicker, ticker); err != nil {
 							// Ticker以外のデータが送信されている場合
 							continue OUTER
 						}
 
-						tickerChan <- ticker
+						dateTime, err := lib.StringToDateTime(ticker.Timestamp)
+						if err != nil {
+							continue OUTER
+						}
+
+						entity := entities.NewTicker(symbol, dateTime, ticker.midPrice(), ticker.Volume)
+
+						tickerChan <- entity
 					}
 				}
 			}
@@ -192,7 +203,7 @@ OUTER:
 	}
 }
 
-func (b *BitflyerClient) privateAPIHeader(method, endpoint string, body []byte) (map[string]string, error) {
+func (b *bitflyerClient) privateAPIHeader(method, endpoint string, body []byte) (map[string]string, error) {
 	timestamp := strconv.FormatInt(time.Now().Unix(), 10)
 
 	message := timestamp + method + endpoint + string(body)
@@ -215,7 +226,7 @@ func (b *BitflyerClient) privateAPIHeader(method, endpoint string, body []byte) 
 	return header, nil
 }
 
-func (b *BitflyerClient) publicAPIHeader() map[string]string {
+func (b *bitflyerClient) publicAPIHeader() map[string]string {
 	header := map[string]string{
 		"Content-Type": "application/json",
 	}
@@ -223,7 +234,7 @@ func (b *BitflyerClient) publicAPIHeader() map[string]string {
 	return header
 }
 
-func (b *BitflyerClient) convertSymbol(symbol *valueobject.Symbol) string {
+func (b *bitflyerClient) convertSymbol(symbol *valueobjects.Symbol) string {
 	switch {
 	case symbol.IsBTCJPY():
 		return "BTC_JPY"

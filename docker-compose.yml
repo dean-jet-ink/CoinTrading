@@ -10,6 +10,6 @@ services:
       - 8080:8080
       - 2345:2345
     volumes:
-      - ./:/app
+      - ./:/src
     environment:
       GO_ENV: dev
