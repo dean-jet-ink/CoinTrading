@@ -9,13 +9,13 @@ import (
 	"time"
 )
 
-type clientBase struct {
+type ClientBase struct {
 	baseURL    string
 	httpClient *http.Client
 }
 
-func newClientBase(baseURL string) *clientBase {
-	return &clientBase{
+func NewClientBase(baseURL string) *ClientBase {
+	return &ClientBase{
 		baseURL: baseURL,
 		httpClient: &http.Client{
 			Timeout: 60 * time.Second,
@@ -23,7 +23,25 @@ func newClientBase(baseURL string) *clientBase {
 	}
 }
 
-func (c *clientBase) request(method, endpoint string, query map[string]string, header map[string]string, data []byte) (*http.Response, error) {
+func (c *ClientBase) Request(method, path string, query map[string]string, header map[string]string, data []byte, responseType any) error {
+	endpoint, err := c.createEndpoint(path)
+	if err != nil {
+		return err
+	}
+
+	resp, err := c.doRequest(method, endpoint, query, header, data)
+	if err != nil {
+		return err
+	}
+
+	if err = c.unmarshalResponse(resp, responseType); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (c *ClientBase) doRequest(method, endpoint string, query map[string]string, header map[string]string, data []byte) (*http.Response, error) {
 	req, err := http.NewRequest(method, endpoint, bytes.NewBuffer(data))
 	if err != nil {
 		return nil, err
@@ -48,7 +66,7 @@ func (c *clientBase) request(method, endpoint string, query map[string]string, h
 	return resp, nil
 }
 
-func (c *clientBase) createEndpoint(path string) (string, error) {
+func (c *ClientBase) createEndpoint(path string) (string, error) {
 	base, err := url.Parse(c.baseURL)
 	if err != nil {
 		return "", err
@@ -64,7 +82,7 @@ func (c *clientBase) createEndpoint(path string) (string, error) {
 	return endpoint, nil
 }
 
-func (c *clientBase) unmarshalResponse(resp *http.Response, out any) error {
+func (c *ClientBase) unmarshalResponse(resp *http.Response, out any) error {
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)

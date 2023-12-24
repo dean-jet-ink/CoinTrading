@@ -8,12 +8,17 @@ type Balance struct {
 	available    float64
 }
 
-func NewBalance(currencyCode string, amount, available float64) *Balance {
+func NewBalance(currencyCode int, amount, available float64) (*Balance, error) {
+	c, err := valueobjects.NewCurrencyCode(currencyCode)
+	if err != nil {
+		return nil, err
+	}
+
 	return &Balance{
-		currencyCode: valueobjects.NewCurrencyCode(currencyCode),
+		currencyCode: c,
 		amount:       amount,
 		available:    available,
-	}
+	}, nil
 }
 
 func (b *Balance) CurrencyCode() *valueobjects.CurrencyCode {

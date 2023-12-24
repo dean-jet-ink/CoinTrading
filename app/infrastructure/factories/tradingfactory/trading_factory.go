@@ -5,7 +5,7 @@ import (
 	"cointrading/app/domain/factories"
 	"cointrading/app/domain/repositories"
 	"cointrading/app/domain/valueobjects"
-	"cointrading/app/infrastructure/apiclients"
+	"cointrading/app/infrastructure/apiclients/bitflyer"
 	"log"
 )
 
@@ -19,9 +19,9 @@ func NewTradingFactory() factories.ITradingFactory {
 func (t *TradingFactory) CreateTradingAPIClient(exchange *valueobjects.Exchange) repositories.TradingAPIClient {
 	switch {
 	case exchange.IsBitflyer():
-		return apiclients.NewBitflyerClient(config.BitflyerApiKey(), config.BitflyerApiSecret())
+		return bitflyer.NewBitflyerClient(config.BitflyerApiKey(), config.BitflyerApiSecret())
 	default:
 		log.Printf("Unexpected exchange code %v. Defaulting to bitflyer", exchange.Value())
-		return apiclients.NewBitflyerClient(config.BitflyerApiKey(), config.BitflyerApiSecret())
+		return bitflyer.NewBitflyerClient(config.BitflyerApiKey(), config.BitflyerApiSecret())
 	}
 }

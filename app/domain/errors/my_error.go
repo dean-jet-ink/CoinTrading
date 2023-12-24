@@ -21,11 +21,11 @@ func NewMyError(message, original string, code uint16) error {
 }
 
 func (m *MyError) Error() string {
-	return m.message
+	return m.original
 }
 
-func (m *MyError) Original() string {
-	return m.original
+func (m *MyError) DisplayError() string {
+	return m.message
 }
 
 func (m *MyError) Code() uint16 {

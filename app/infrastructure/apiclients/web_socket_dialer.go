@@ -30,7 +30,7 @@ func (w *WebSocketDialer) Dial(urlStr string, requestHeader http.Header) (*webso
 	return w.dialer.Dial(urlStr, requestHeader)
 }
 
-type jsonRPC2 struct {
+type JsonRPC2 struct {
 	Version string `json:"jsonrpc"`
 	Method  string `json:"method"`
 	Params  any    `json:"params"`

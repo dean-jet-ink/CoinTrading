@@ -3,6 +3,7 @@ package valueobjects
 import (
 	"cointrading/app/domain/errors"
 	"fmt"
+	"net/http"
 )
 
 var (
@@ -11,10 +12,10 @@ var (
 	bitget   = &Exchange{3}
 )
 
-var exchangeNames = map[Exchange]string{
-	*bitflyer: "Bitflyer",
-	*bybit:    "Bybit",
-	*bitget:   "Bitget",
+var exchangeNames = map[int]string{
+	1: "Bitflyer",
+	2: "Bybit",
+	3: "Bitget",
 }
 
 type Exchange struct {
@@ -22,30 +23,26 @@ type Exchange struct {
 }
 
 func NewExchange(value int) (*Exchange, error) {
-	exchange := &Exchange{
-		value: value,
-	}
-
-	if _, ok := exchangeNames[*exchange]; !ok {
+	if _, ok := exchangeNames[value]; !ok {
 		message := fmt.Sprint("非対応の取引所です")
 		original := fmt.Sprintf("Unexpected exchange code %v", value)
 
-		myerr := errors.NewMyError(message, original, 500)
+		myerr := errors.NewMyError(message, original, http.StatusInternalServerError)
 
 		return nil, myerr
 	}
 
-	return exchange, nil
+	return &Exchange{
+		value: value,
+	}, nil
 }
 
 func (e *Exchange) Value() int {
 	return e.value
 }
 
-func (e *Exchange) String() string {
-	exchangeName, _ := exchangeNames[*e]
-
-	return exchangeName
+func (e *Exchange) DisplayValue() string {
+	return exchangeNames[e.value]
 }
 
 func (e *Exchange) IsBitflyer() bool {
