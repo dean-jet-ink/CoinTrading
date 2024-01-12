@@ -1,0 +1,24 @@
+FROM golang:1.21.5-alpine
+
+WORKDIR /home
+
+# ローカルのgo.mod、go.sumをコピーし、go mod downloadによりモジュールのキャッシュ作成
+# go mod verifyにて依存関係を照合
+COPY go.mod go.sum ./
+
+RUN go mod download
+
+COPY . .
+
+RUN apk update \
+# Git、及びSQLiteのインストール
+&& apk add --no-cache git sqlite-dev gcc musl-dev \
+# ホットリロード  Air
+&& go install  github.com/cosmtrek/air@v1.44.0 \
+# Language Server
+&& go install -v golang.org/x/tools/gopls@latest \
+# デバッグ
+&& go install -v github.com/go-delve/delve/cmd/dlv@latest
+
+# Airにて実行(事前にルートディレクトリに".air.toml"を準備)
+CMD ["air", "-c", ".air.toml"]

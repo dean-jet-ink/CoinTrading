@@ -2,3 +2,5 @@
 static/
 tmp/
 .vscode/
+
+node_modules

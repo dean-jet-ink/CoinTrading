@@ -1,15 +1,37 @@
 version: "3"
 services:
-  go:
+  server:
     build:
-      context: .
-      dockerfile: docker/Dockerfile.dev
-    image: coin_go
-    container_name: coin_go
+      context: ./server
+      dockerfile: docker/Dockerfile
+    image: coin_server
+    container_name: coin_server
     ports:
-      - 8080:8080
-      - 2345:2345
+      - 50000:50000
+      - 23450:23450
     volumes:
-      - ./:/src
+      - ./server:/home
     environment:
-      GO_ENV: dev
+      - GO_ENV=dev
+      - DOCKER_WORKDIR=/home
+      - CGO_CFLAGS=-D_LARGEFILE64_SOURCE
+      - TZ=Asia/Tokyo
+
+  client:
+    build:
+      context: ./client
+      dockerfile: docker/Dockerfile
+    image: coin_client
+    container_name: coin_client
+    ports:
+      - 30000:30000
+      - 60060:60060
+    volumes:
+      - ./client:/home
+      - node_modules:/home/node_modules
+    environment:
+      - WATCHPACK_POLLING=true
+      - TZ=Asia/Tokyo
+
+volumes:
+  node_modules:
