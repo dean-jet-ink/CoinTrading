@@ -1,23 +1,26 @@
 import { Dataframe } from "../type";
-import { WS_URL } from "@/config/constants";
+import { DataframeParams } from "@/store/dataframe-params";
 
 export const useGetDataframeCandleStream = () => {
-  if (!WS_URL) throw new Error("WS_URL is not defined");
+  const onMessage = (setState: (df: Dataframe) => void) => {
+    return (e: MessageEvent<string>) => {
+      const dataframe: Dataframe = JSON.parse(e.data);
 
-  const websocket = new WebSocket(`${WS_URL}/candles`);
-
-  const onMessage = (e: MessageEvent<Dataframe>) => {};
-
-  websocket.addEventListener("message", onMessage);
-
-  const sendMessage = () => {
-    websocket.send(JSON.stringify({}));
+      setState(dataframe);
+    };
   };
 
-  const { close } = websocket;
+  const sendMessage = (ws: WebSocket, message: DataframeParams) => {
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify(message));
+      console.log("Sent message: ", message);
+    } else {
+      console.log("WebSocket not connected");
+    }
+  };
 
   return {
+    onMessage,
     sendMessage,
-    close,
   };
 };

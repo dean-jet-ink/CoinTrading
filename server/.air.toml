@@ -6,12 +6,11 @@ root = "."
 tmp_dir = "tmp"
 
 [build]
-# コンパイラでの最適化(-N)、インライン最適化(-l)を無効
 cmd = 'go build -gcflags "all=-N -l" -o ./tmp/main ./app'
 # Binary file yields from `cmd`.
 bin = "tmp/main"
 # PORT 23450にてdlv起動
-full_bin = "dlv --listen=:23450 --headless=true --api-version=2 --accept-multiclient exec --continue ./tmp/main"
+full_bin = "dlv exec --accept-multiclient --headless=true --listen=:2345 --api-version=2 ./tmp/main"
 # Watch these filename extensions.
 include_ext = ["go", "tpl", "tmpl", "html"]
 # Ignore these filename extensions or directories.

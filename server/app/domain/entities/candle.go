@@ -18,12 +18,12 @@ type Candle struct {
 	volume   float64
 }
 
-func NewCandle(exchange *valueobjects.Exchange, symbol *valueobjects.Symbol, duration *valueobjects.Duration, time *valueobjects.DateTime, open float64, close float64, high float64, low float64, volume float64) *Candle {
+func NewCandle(exchange *valueobjects.Exchange, symbol *valueobjects.Symbol, duration *valueobjects.Duration, time time.Time, open float64, close float64, high float64, low float64, volume float64) *Candle {
 	return &Candle{
 		exchange: exchange,
 		symbol:   symbol,
 		duration: duration,
-		time:     time,
+		time:     valueobjects.NewDateTime(time),
 		open:     open,
 		close:    close,
 		high:     high,

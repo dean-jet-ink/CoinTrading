@@ -10,3 +10,8 @@ export type Candle = {
 export type Dataframe = {
   candles: Candle[];
 };
+
+export type Duration = {
+  value: string;
+  displayValue: string;
+};

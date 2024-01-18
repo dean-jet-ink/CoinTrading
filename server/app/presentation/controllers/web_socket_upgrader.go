@@ -5,6 +5,7 @@ import (
 	"cointrading/app/domain/myerror"
 	"cointrading/app/presentation/router"
 	"fmt"
+	"net/http"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -12,6 +13,10 @@ import (
 
 type WebSocketUpgrader struct {
 	upgrader *websocket.Upgrader
+}
+
+var allowedOrigins = map[string]bool{
+	"http://localhost:30000": true,
 }
 
 func NewWebSocketUpgrader() *WebSocketUpgrader {
@@ -23,6 +28,10 @@ func NewWebSocketUpgrader() *WebSocketUpgrader {
 			HandshakeTimeout: time.Duration(timeoutSec) * time.Second,
 			ReadBufferSize:   buffer,
 			WriteBufferSize:  buffer,
+			CheckOrigin: func(r *http.Request) bool {
+				origin := r.Header.Get("Origin")
+				return allowedOrigins[origin]
+			},
 		},
 	}
 }

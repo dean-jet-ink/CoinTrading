@@ -22,7 +22,7 @@ func NewCandleRepository(db *gorm.DB) repositories.CandleRepository {
 func (g *gormCandle) FindByTime(candle *entities.Candle) (*entities.Candle, error) {
 	model := &models.Candle{}
 
-	if err := g.db.Table(candle.GetTableName()).Where("time = ?", candle.Time()).Find(model).Error; err != nil {
+	if err := g.db.Table(candle.GetTableName()).Where("time = ?", candle.TruncatedDateTime()).Find(model).Error; err != nil {
 		return nil, err
 	}
 
@@ -38,21 +38,22 @@ func (g *gormCandle) FindByTime(candle *entities.Candle) (*entities.Candle, erro
 func (g *gormCandle) FindAllWithLimit(candle *entities.Candle, limit int) ([]*entities.Candle, error) {
 	models := []*models.Candle{}
 
-  subQuery := g.db.Table(candle.GetTableName()).Order("time DESC").Limit(limit)
+	subQuery := g.db.Table(candle.GetTableName()).Order("time DESC").Limit(limit)
 
-	if err := g.db.Table("(?) as c", subQuery).Order("time ASC").Find(models).Error; err!= nil {
+	err := g.db.Table("(?) as c", subQuery).Order("time ASC").Find(&models).Error
+	if err != nil {
 		return nil, err
 	}
 
-  entities := []*entities.Candle{}
+	entities := []*entities.Candle{}
 
-  for _, model := range models {
-    entity := g.modelToEntity(candle.Exchange(), candle.Symbol(), candle.Duration(), model)
+	for _, model := range models {
+		entity := g.modelToEntity(candle.Exchange(), candle.Symbol(), candle.Duration(), model)
 
-    entities = append(entities, entity)
-  }
+		entities = append(entities, entity)
+	}
 
-  return entities, nil
+	return entities, nil
 }
 
 func (g *gormCandle) Create(candle *entities.Candle) error {
@@ -91,7 +92,7 @@ func (g *gormCandle) modelToEntity(exchange *valueobjects.Exchange, symbol *valu
 		exchange,
 		symbol,
 		duration,
-		valueobjects.NewDateTime(model.Time),
+		model.Time,
 		model.Open,
 		model.Close,
 		model.High,

@@ -11,7 +11,9 @@ func init() {
 }
 
 func main() {
+	// setupRouterというメソッドを作るべき
+	// factoryでrouterをセットアップは変すぎる
+	fmt.Println("Starting")
 	router := di.Initialize()
-
 	router.Run(fmt.Sprintf(":%v", config.Port()))
 }

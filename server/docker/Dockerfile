@@ -1,6 +1,6 @@
 FROM golang:1.21.5-alpine
 
-WORKDIR /home
+WORKDIR /server
 
 # ローカルのgo.mod、go.sumをコピーし、go mod downloadによりモジュールのキャッシュ作成
 # go mod verifyにて依存関係を照合

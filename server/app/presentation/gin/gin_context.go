@@ -51,9 +51,9 @@ func (g *ginContext) Next() {
 }
 
 func (g *ginContext) Writer() http.ResponseWriter {
-	return g.Writer()
+	return g.ctx.Writer
 }
 
 func (g *ginContext) Request() *http.Request {
-	return g.Request()
+	return g.ctx.Request
 }

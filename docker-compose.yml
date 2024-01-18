@@ -8,12 +8,12 @@ services:
     container_name: coin_server
     ports:
       - 50000:50000
-      - 23450:23450
+      - 2345:2345
     volumes:
-      - ./server:/home
+      - ./server:/server
     environment:
       - GO_ENV=dev
-      - DOCKER_WORKDIR=/home
+      - DOCKER_WORKDIR=/server
       - CGO_CFLAGS=-D_LARGEFILE64_SOURCE
       - TZ=Asia/Tokyo
 
@@ -27,8 +27,8 @@ services:
       - 30000:30000
       - 60060:60060
     volumes:
-      - ./client:/home
-      - node_modules:/home/node_modules
+      - ./client:/client
+      - node_modules:/client/node_modules
     environment:
       - WATCHPACK_POLLING=true
       - TZ=Asia/Tokyo

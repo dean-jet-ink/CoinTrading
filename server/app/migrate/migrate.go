@@ -10,6 +10,7 @@ import (
 	mygorm "cointrading/app/infrastructure/gorm"
 	"fmt"
 	"log"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -51,7 +52,7 @@ func gormMigrate() {
 	for _, e := range exchanges {
 		for _, s := range symbols {
 			for _, d := range durations {
-				candle := entities.NewCandle(e, s, d, nil, 0, 0, 0, 0, 0)
+				candle := entities.NewCandle(e, s, d, time.Time{}, 0, 0, 0, 0, 0)
 
 				tableName := candle.GetTableName()
 

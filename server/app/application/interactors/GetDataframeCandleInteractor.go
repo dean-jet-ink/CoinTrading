@@ -7,6 +7,8 @@ import (
 	"cointrading/app/domain/entities"
 	"cointrading/app/domain/repositories"
 	"cointrading/app/domain/shared"
+	"fmt"
+	"time"
 )
 
 type GetDataframeCandleInteractor struct {
@@ -20,7 +22,9 @@ func NewGetDataframeCandleUsecase(candleRepo repositories.CandleRepository) getd
 }
 
 func (g *GetDataframeCandleInteractor) Handle(input *getdataframecandle.GetDataframeCandleInput) (*getdataframecandle.GetDataframeCandleOutput, error) {
-	candle := entities.NewCandle(shared.Exchange(), shared.Symbol(), shared.Duration(), nil, 0, 0, 0, 0, 0)
+	candle := entities.NewCandle(shared.Exchange(), shared.Symbol(), shared.Duration(), time.Time{}, 0, 0, 0, 0, 0)
+
+	fmt.Println("Hello")
 
 	candles, err := g.candleRepo.FindAllWithLimit(candle, config.GetCandleLimit())
 	if err != nil {

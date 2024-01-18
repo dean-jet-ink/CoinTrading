@@ -5,6 +5,7 @@ import (
 	"cointrading/app/domain/entities"
 	"cointrading/app/domain/repositories"
 	"cointrading/app/domain/valueobjects"
+	"time"
 )
 
 type SaveCandleInteractor struct {
@@ -21,11 +22,11 @@ func (s *SaveCandleInteractor) Handle(input *savecandle.SaveCandleInput) (*savec
 	exchange := input.Exchange
 	symbol := input.Ticker.Symbol()
 	duration := input.Duration
-	dateTime := input.Ticker.DateTime()
+	time := input.Ticker.Time()
 	price := input.Ticker.MidPrice()
 	volume := input.Ticker.Volume()
 
-	candle := entities.NewCandle(exchange, symbol, duration, dateTime, 0, 0, 0, 0, 0)
+	candle := entities.NewCandle(exchange, symbol, duration, time, 0, 0, 0, 0, 0)
 
 	candle, err := s.candleRepo.FindByTime(candle)
 	if err != nil {
@@ -37,7 +38,7 @@ func (s *SaveCandleInteractor) Handle(input *savecandle.SaveCandleInput) (*savec
 	}
 
 	if candle == nil {
-		if err = s.createCandle(exchange, symbol, duration, dateTime, price, volume); err != nil {
+		if err = s.createCandle(exchange, symbol, duration, time, price, volume); err != nil {
 			return nil, err
 		}
 
@@ -53,7 +54,7 @@ func (s *SaveCandleInteractor) Handle(input *savecandle.SaveCandleInput) (*savec
 	return output, nil
 }
 
-func (s *SaveCandleInteractor) createCandle(exchange *valueobjects.Exchange, symbol *valueobjects.Symbol, duration *valueobjects.Duration, time *valueobjects.DateTime, price, volume float64) error {
+func (s *SaveCandleInteractor) createCandle(exchange *valueobjects.Exchange, symbol *valueobjects.Symbol, duration *valueobjects.Duration, time time.Time, price, volume float64) error {
 	candle := entities.NewCandle(
 		exchange,
 		symbol,
@@ -89,7 +90,7 @@ func (s *SaveCandleInteractor) updateCandle(price, volume float64, candle *entit
 		candle.Exchange(),
 		candle.Symbol(),
 		candle.Duration(),
-		candle.Time(),
+		candle.Time().Value(),
 		candle.Open(),
 		close,
 		high,

@@ -29,11 +29,11 @@ func SetSymbol(s *valueobjects.Symbol) {
 }
 
 func Duration() *valueobjects.Duration {
-  return duration
+	return duration
 }
 
 func SetDuration(d *valueobjects.Duration) {
-  duration = d
+	duration = d
 }
 
 func APIClient() repositories.TradingAPIClient {

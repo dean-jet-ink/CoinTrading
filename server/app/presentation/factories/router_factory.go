@@ -35,7 +35,7 @@ func NewRouter(
 
 	r.POST("/sendorder", oc.SendOrder)
 
-	sb.Exec()
+	// go sb.Exec()
 
 	return r
 }

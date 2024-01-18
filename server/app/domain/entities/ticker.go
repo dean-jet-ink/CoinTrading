@@ -6,11 +6,11 @@ import (
 )
 
 type Ticker struct {
-	symbol   *valueobjects.Symbol
-	dateTime *valueobjects.DateTime
-	bestAsk  float64
-	bestBid  float64
-	volume   float64
+	symbol  *valueobjects.Symbol
+	time    time.Time
+	bestAsk float64
+	bestBid float64
+	volume  float64
 }
 
 func NewTicker(symbol int, dateTime time.Time, bestAsk, bestBid float64, volume float64) (*Ticker, error) {
@@ -20,11 +20,11 @@ func NewTicker(symbol int, dateTime time.Time, bestAsk, bestBid float64, volume 
 	}
 
 	return &Ticker{
-		symbol:   s,
-		dateTime: valueobjects.NewDateTime(dateTime),
-		bestAsk:  bestAsk,
-		bestBid:  bestBid,
-		volume:   volume,
+		symbol:  s,
+		time:    dateTime,
+		bestAsk: bestAsk,
+		bestBid: bestBid,
+		volume:  volume,
 	}, nil
 }
 
@@ -32,8 +32,8 @@ func (t *Ticker) Symbol() *valueobjects.Symbol {
 	return t.symbol
 }
 
-func (t *Ticker) DateTime() *valueobjects.DateTime {
-	return t.dateTime
+func (t *Ticker) Time() time.Time {
+	return t.time
 }
 
 func (t *Ticker) BestAsk() float64 {
