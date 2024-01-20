@@ -9,12 +9,14 @@ var (
 	JPY = &CurrencyCode{1}
 	BTC = &CurrencyCode{2}
 	ETH = &CurrencyCode{3}
+	XRP = &CurrencyCode{4}
 )
 
 var currencyCodes = map[CurrencyCode]string{
 	*JPY: "円",
 	*BTC: "BTC",
 	*ETH: "ETH",
+	*XRP: "XRP",
 }
 
 type CurrencyCode struct {
@@ -48,5 +50,6 @@ func CurrencyCodes() []*CurrencyCode {
 		JPY,
 		BTC,
 		ETH,
+		XRP,
 	}
 }

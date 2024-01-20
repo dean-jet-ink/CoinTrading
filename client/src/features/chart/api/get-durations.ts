@@ -1,13 +1,15 @@
 import { BE_URL } from "@/config/constants";
-import { Duration } from "../type";
 import { useQuery } from "@tanstack/react-query";
+import { Durations } from "../type";
 import chartKeys from "./query-keys/chart-keys";
 
 const useGetDurations = () => {
-  const getDurations = async (): Promise<Duration[]> => {
+  const getDurations = async (): Promise<Durations> => {
     try {
-      const res = await fetch(`${BE_URL}/durations`);
-      const durations: Duration[] = await res.json();
+      const res = await fetch(`${BE_URL}/durations`, {
+        cache: "force-cache",
+      });
+      const durations: Durations = await res.json();
 
       return durations;
     } catch (error) {
@@ -16,10 +18,12 @@ const useGetDurations = () => {
     }
   };
 
-  const { data, isLoading } = useQuery({
+  const { data: durations, isLoading: isLoadingDurations } = useQuery({
     queryKey: chartKeys.durations,
     queryFn: getDurations,
   });
 
-  return { data, isLoading };
+  return { durations, isLoadingDurations };
 };
+
+export default useGetDurations;

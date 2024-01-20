@@ -8,16 +8,19 @@ import (
 var (
 	BTCJPY = &Symbol{1}
 	ETHJPY = &Symbol{2}
+	XRPJPY = &Symbol{3}
 )
 
 var symbolNames = map[Symbol]string{
 	*BTCJPY: "BTC/JPY",
 	*ETHJPY: "ETH/JPY",
+	*XRPJPY: "XRP/JPY",
 }
 
 var symbolTableNames = map[Symbol]string{
 	*BTCJPY: "btc_jpy",
 	*ETHJPY: "eth_jpy",
+	*XRPJPY: "xrp_jpy",
 }
 
 type Symbol struct {
@@ -56,9 +59,14 @@ func (s *Symbol) IsETHJPY() bool {
 	return *s == *ETHJPY
 }
 
+func (s *Symbol) IsXRPJPY() bool {
+	return *s == *XRPJPY
+}
+
 func Symbols() []*Symbol {
 	return []*Symbol{
 		BTCJPY,
 		ETHJPY,
+		XRPJPY,
 	}
 }

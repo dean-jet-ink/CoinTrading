@@ -50,6 +50,8 @@ func (b *bitflyerClient) convertSymbolToString(symbol *valueobjects.Symbol) (str
 		return "BTC_JPY", nil
 	case symbol.IsETHJPY():
 		return "ETH_JPY", nil
+	case symbol.IsXRPJPY():
+		return "XRP_JPY", nil
 	default:
 		err := fmt.Errorf("%w: Unexpected symbol code %v", myerror.ErrUnexpectedSymbol, symbol.Value())
 
@@ -61,6 +63,7 @@ func (b *bitflyerClient) convertSymbolToInt(symbol string) (int, error) {
 	symbolInts := map[string]int{
 		"BTC_JPY": valueobjects.BTCJPY.Value(),
 		"ETH_JPY": valueobjects.ETHJPY.Value(),
+		"XRP_JPY": valueobjects.XRPJPY.Value(),
 	}
 
 	symbolInt, ok := symbolInts[symbol]
@@ -78,6 +81,7 @@ func (b *bitflyerClient) convertCurrencyCodeToInt(currencyCode string) (int, boo
 		"JPY": valueobjects.JPY.Value(),
 		"BTC": valueobjects.BTC.Value(),
 		"ETH": valueobjects.ETH.Value(),
+		"XRP": valueobjects.XRP.Value(),
 	}
 
 	code, ok := currencyCodes[currencyCode]

@@ -14,4 +14,5 @@ var (
 	ErrNotFoundOrder          = errors.New("オーダーが見つかりませんでした")
 	ErrFailedToConnectNetwork = errors.New("ネットワーク接続に失敗しました")
 	ErrBadRequest             = errors.New("不正なリクエストです")
+	ErrRecordNotFound         = errors.New("レコードが見つかりませんでした")
 )

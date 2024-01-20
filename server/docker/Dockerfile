@@ -21,4 +21,4 @@ RUN apk update \
 && go install -v github.com/go-delve/delve/cmd/dlv@latest
 
 # Airにて実行(事前にルートディレクトリに".air.toml"を準備)
-CMD ["air", "-c", ".air.toml"]
+# CMD ["air", "-c", ".air.toml"]

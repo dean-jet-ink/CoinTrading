@@ -8,6 +8,7 @@ import (
 	"cointrading/app/domain/entities"
 	"cointrading/app/domain/valueobjects"
 	mygorm "cointrading/app/infrastructure/gorm"
+	"cointrading/app/infrastructure/gorm/models"
 	"fmt"
 	"log"
 	"time"
@@ -75,7 +76,7 @@ func gormMigrate() {
 		}
 	}
 
-	// if err := db.AutoMigrate(); err != nil {
-	// 	log.Fatalf("Failed to migrate: %s", err)
-	// }
+	if err := db.AutoMigrate(&models.TradingConfig{}); err != nil {
+		log.Fatalf("Failed to migrate: %s", err)
+	}
 }

@@ -37,3 +37,7 @@ func (g *gormFactory) NewCandleRepository() repositories.CandleRepository {
 func (g *gormFactory) NewOrderRepository() repositories.OrderRepository {
 	return mygorm.NewOrderRepository(g.db)
 }
+
+func (g *gormFactory) NewTradingConfigRepository() repositories.TradingConfigRepository {
+	return mygorm.NewTradingConfigRepository(g.db)
+}

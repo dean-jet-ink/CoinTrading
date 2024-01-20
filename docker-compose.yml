@@ -12,10 +12,10 @@ services:
     volumes:
       - ./server:/server
     environment:
-      - GO_ENV=dev
       - DOCKER_WORKDIR=/server
       - CGO_CFLAGS=-D_LARGEFILE64_SOURCE
       - TZ=Asia/Tokyo
+    command: ./sh/startup.sh
 
   client:
     build:

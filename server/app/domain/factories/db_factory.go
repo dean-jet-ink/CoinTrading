@@ -7,4 +7,5 @@ import (
 type DBFactory interface {
 	NewCandleRepository() repositories.CandleRepository
 	NewOrderRepository() repositories.OrderRepository
+	NewTradingConfigRepository() repositories.TradingConfigRepository
 }

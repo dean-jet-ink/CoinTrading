@@ -10,6 +10,7 @@ import (
 	"cointrading/app/presentation/backgrounds"
 	"cointrading/app/presentation/controllers"
 	"cointrading/app/presentation/factories"
+	"cointrading/app/presentation/initialize"
 	"cointrading/app/presentation/router"
 )
 
@@ -22,6 +23,7 @@ func Initialize() router.Router {
 	// DB
 	dbFactory := dbfactory.NewDBFactory()
 	candleRepository := dbFactory.NewCandleRepository()
+	tradingConfigRepository := dbFactory.NewTradingConfigRepository()
 
 	// Background
 	getRealTimeTickerUsecase := interactors.NewGetRealTimeTickerUsecase(candleRepository)
@@ -34,10 +36,22 @@ func Initialize() router.Router {
 	getDataframeCandleUsecase := interactors.NewGetDataframeCandleUsecase(candleRepository)
 	candleController := controllers.NewCandleController(getDataframeCandleUsecase)
 
+	getTradingConfigUsecase := interactors.NewGetTradingConfigUsecase()
+	getExchangesUsecase := interactors.NewGetExchangesUsecase()
+	getSymbolsUsecase := interactors.NewGetSymbolsUsecase()
+	getDurationsUsecase := interactors.NewGetDurationsUsecase()
+	updateTradingConfigUsecase := interactors.NewUpdateTradingConfigUsecase(tradingConfigRepository)
+	tradingConfigController := controllers.NewTradingConfigController(getTradingConfigUsecase, getExchangesUsecase, getSymbolsUsecase, getDurationsUsecase, updateTradingConfigUsecase)
+
+	initializeTradingConfigUsecase := interactors.NewInitializeTradingConfigUsecase(tradingConfigRepository)
+	initExcutor := initialize.NewInitExecutor(initializeTradingConfigUsecase)
+
 	routerFactory := factories.NewRouter(
 		streamIngestionDataBackground,
 		orderController,
 		candleController,
+		tradingConfigController,
+		initExcutor,
 	)
 
 	return routerFactory
